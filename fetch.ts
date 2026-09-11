@@ -2,7 +2,16 @@ const CLEAN_IP_URL = 'https://raw.githubusercontent.com/vfarid/cf-clean-ips/main
 const IRCF_JSON_URL = 'https://raw.githubusercontent.com/ircfspace/cf2dns/master/list/ipv4.json';
 // Main raw proxy source: Nautica (FoolVPN) — rawProxyList.txt contains about 12.5k IPs
 const NAUTICA_URL = 'https://raw.githubusercontent.com/FoolVPN-ID/Nautica/main/rawProxyList.txt';
+const PROXYIP_TRACKER_URL =
+  'https://raw.githubusercontent.com/FarelRA/proxyip-tracker/main/result/ips.csv';
+const XGONCE_IP_URL = 'https://raw.githubusercontent.com/xgonce/Cloudflare_IP/main/result.csv';
+const YMUUU_IPDB_URL =
+  'https://raw.githubusercontent.com/ymyuuu/IPDB/main/BestProxy/bestproxy%26country.txt';
 const RAW_PROXY_LIST_FILE = './raw.txt';
+// Only keep ID/SG/MY region proxies
+const REGION_WHITELIST = new Set(['ID', 'SG', 'MY']);
+// Colo → country for proxyip-tracker (only ID/SG/MY colos kept)
+const COLO_COUNTRY: Record<string, string> = { SIN: 'SG' };
 
 interface ProxyEntry {
   ip: string;
@@ -157,17 +166,94 @@ async function fetchNautica(): Promise<ProxyEntry[]> {
   }
 }
 
+// Fetch Oracle Cloud proxy IPs with verified colo (proxyip-tracker). Colo→country, whitelist only.
+async function fetchProxyIPTracker(): Promise<ProxyEntry[]> {
+  try {
+    console.log('🌐 Fetching verified Oracle proxy IPs from proxyip-tracker...');
+    const response = await fetch(PROXYIP_TRACKER_URL);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+    const text = await response.text();
+    const list: ProxyEntry[] = [];
+    for (const line of text.split('\n').slice(1)) {
+      const [ip, colo] = line.split(',');
+      const country = COLO_COUNTRY[(colo || '').trim()];
+      if (ip && country && /^(\d{1,3}\.){3}\d{1,3}$/.test(ip.trim())) {
+        list.push({ ip: ip.trim(), port: 443, country, org: `Oracle Cloud (${colo.trim()})` });
+      }
+    }
+    return list;
+  } catch (error) {
+    console.error('❌ Failed to fetch from proxyip-tracker:', error);
+    return [];
+  }
+}
+
+// Fetch fresh proxyip from xgonce (6h update). CSV: IP,cf-meta-ip,端口,速度,CF归属国,机房,...
+async function fetchXgonceIPs(): Promise<ProxyEntry[]> {
+  try {
+    console.log('🌐 Fetching fresh proxyip from xgonce/Cloudflare_IP...');
+    const response = await fetch(XGONCE_IP_URL);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+    const text = await response.text();
+    const list: ProxyEntry[] = [];
+    for (const line of text.split('\n').slice(1)) {
+      const cols = line.split(',');
+      const ip = cols[0]?.trim();
+      const port = parseInt(cols[2], 10);
+      const country = cols[4]?.trim();
+      const colo = cols[5]?.trim();
+      if (ip && !isNaN(port) && country && /^(\d{1,3}\.){3}\d{1,3}$/.test(ip)) {
+        list.push({ ip, port, country, org: `CF ProxyIP (${colo || country})` });
+      }
+    }
+    return list;
+  } catch (error) {
+    console.error('❌ Failed to fetch from xgonce:', error);
+    return [];
+  }
+}
+
+// Fetch country-tagged proxyip from ymyuuu/IPDB (IP#CC format, default port 443).
+async function fetchYmyuuuIpdbs(): Promise<ProxyEntry[]> {
+  try {
+    console.log('🌐 Fetching proxyip from ymyuuu/IPDB...');
+    const response = await fetch(YMUUU_IPDB_URL);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+    const text = await response.text();
+    const list: ProxyEntry[] = [];
+    for (const line of text.split('\n')) {
+      const [ip, cc] = line.trim().split('#');
+      if (ip && cc && /^(\d{1,3}\.){3}\d{1,3}$/.test(ip.trim())) {
+        list.push({ ip: ip.trim(), port: 443, country: cc.trim(), org: `ProxyIP (${cc.trim()})` });
+      }
+    }
+    return list;
+  } catch (error) {
+    console.error('❌ Failed to fetch from ymyuuu/IPDB:', error);
+    return [];
+  }
+}
+
 (async () => {
   // Read local + fetch remote with independent failure tolerance
   const existing = await readExistingRaw();
   const listNautica = await fetchNautica();
   const listVfarid = await fetchVfaridIPs();
   const listIrcf = await fetchIrcfIPs();
+  const listProxyIPTracker = await fetchProxyIPTracker();
+  const listXgonce = await fetchXgonceIPs();
+  const listYmyuuu = await fetchYmyuuuIpdbs();
 
   console.log(`📊 Current raw.txt: ${existing.length} IPs`);
   console.log(`📊 Fetched from Nautica (FoolVPN): ${listNautica.length} IPs`);
   console.log(`📊 Fetched from vfarid: ${listVfarid.length} IPs`);
   console.log(`📊 Fetched from ircfspace: ${listIrcf.length} IPs`);
+  console.log(`📊 Fetched from proxyip-tracker: ${listProxyIPTracker.length} IPs`);
+  console.log(`📊 Fetched from xgonce/Cloudflare_IP: ${listXgonce.length} IPs`);
+  console.log(`📊 Fetched from ymyuuu/IPDB: ${listYmyuuu.length} IPs`);
 
   // Merge secara unik berdasarkan IP
   const mergedMap = new Map<string, ProxyEntry>();
@@ -178,7 +264,14 @@ async function fetchNautica(): Promise<ProxyEntry[]> {
   }
 
   // 2. Merge new data only when IP is not already present
-  const allNewLists = [...listNautica, ...listVfarid, ...listIrcf];
+  const allNewLists = [
+    ...listNautica,
+    ...listVfarid,
+    ...listIrcf,
+    ...listProxyIPTracker,
+    ...listXgonce,
+    ...listYmyuuu,
+  ];
   let addedCount = 0;
   for (const item of allNewLists) {
     if (!mergedMap.has(item.ip)) {
@@ -187,7 +280,7 @@ async function fetchNautica(): Promise<ProxyEntry[]> {
     }
   }
 
-  const mergedList = Array.from(mergedMap.values());
+  const mergedList = Array.from(mergedMap.values()).filter(e => REGION_WHITELIST.has(e.country));
 
   // Sort by country code for stable output
   mergedList.sort((a, b) => a.country.localeCompare(b.country));

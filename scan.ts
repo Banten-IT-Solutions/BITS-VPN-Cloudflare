@@ -29,6 +29,8 @@ const PROXY_LIST_FILE = './proxy.txt';
 const IP_RESOLVER_DOMAIN = 'myip.ipeek.workers.dev';
 const IP_RESOLVER_PATH = '/';
 const CONCURRENCY = 99;
+// Only keep ID/SG/MY region proxies
+const REGION_WHITELIST = new Set(['ID', 'SG', 'MY']);
 
 const CHECK_QUEUE: string[] = [];
 
@@ -160,7 +162,12 @@ async function readProxyList(): Promise<ProxyStruct[]> {
     CHECK_QUEUE.push(proxyKey);
     checkProxy(proxy.address, proxy.port)
       .then(res => {
-        if (!res.error && res.result?.proxyip === true && res.result.country) {
+        if (
+          !res.error &&
+          res.result?.proxyip === true &&
+          res.result.country &&
+          REGION_WHITELIST.has(res.result.country)
+        ) {
           activeProxyList.push(
             `${res.result?.proxy},${res.result?.port},${res.result?.country},${res.result?.asOrganization}`
           );
