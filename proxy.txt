@@ -2,109 +2,105 @@
 36.95.152.58,12137,ID,PT Telekomunikasi Indonesia
 172.232.249.224,2053,ID,Linode
 129.225.7.75,443,ID,Oracle Corporation
-168.110.200.146,443,ID,Oracle Corporation
 168.110.222.9,443,ID,Oracle Corporation
+168.110.200.146,443,ID,Oracle Corporation
 138.2.74.219,28616,SG,Cloudflare London, LLC
 129.150.36.188,53435,SG,Oracle Corporation
 47.74.254.191,8900,SG,Alibaba Cloud - SG
 146.235.18.248,45137,SG,Oracle Corporation
-168.138.165.174,443,SG,Oracle Public Cloud
-43.156.181.203,443,SG,16 COLLYER QUAY
-164.52.2.99,443,SG,UCUL-SG
 43.156.116.194,443,SG,6 COLLYER QUAY
-164.52.2.100,443,SG,UCUL-SG
+43.156.181.203,443,SG,16 COLLYER QUAY
 164.52.2.98,443,SG,UCUL-SG
-104.64.192.116,443,SG,Linode
+164.52.2.100,443,SG,UCUL-SG
+164.52.2.99,443,SG,UCUL-SG
+13.250.131.37,443,SG,Amazon Data Services Singapore
+143.42.66.91,443,SG,M1 Ltd
+5.34.176.119,81,SG,Green Floid LLC
+129.150.54.10,443,SG,Oracle Corporation
 51.79.177.53,443,SG,OVH Singapore PTE. LTD
 134.185.82.47,443,SG,Oracle Corporation
-129.150.63.157,443,SG,Oracle Corporation
-129.150.54.10,443,SG,Oracle Corporation
-138.2.64.229,443,SG,Oracle Corporation
 134.185.83.89,443,SG,Oracle Corporation
 134.185.85.155,443,SG,Cloudflare, Inc.
-194.233.85.147,443,SG,Contabo Asia Private Limited
-5.34.176.119,81,SG,Green Floid LLC
-138.2.110.111,443,SG,Oracle Corporation
-134.185.93.120,443,SG,Oracle Corporation
 134.185.91.72,443,SG,Oracle Corporation
-134.185.87.38,443,SG,Oracle Corporation
-138.2.81.90,443,SG,Oracle Corporation
-138.2.95.33,443,SG,Oracle Corporation
-138.2.66.236,443,SG,Oracle Corporation
-140.245.114.168,443,SG,Oracle Corporation
-140.245.104.189,443,SG,Oracle Corporation
-140.245.114.190,443,SG,Oracle Corporation
-140.245.127.48,443,SG,Oracle Corporation
-129.150.63.14,443,SG,Oracle Corporation
+194.233.85.147,443,SG,Contabo Asia Private Limited
+138.2.109.83,443,SG,Oracle Corporation
 138.2.77.82,443,SG,Oracle Corporation
+138.2.87.237,443,SG,Oracle Corporation
+138.2.66.236,443,SG,Oracle Corporation
+138.2.95.33,443,SG,Oracle Corporation
+168.138.165.174,443,SG,Oracle Public Cloud
+138.2.110.111,443,SG,Oracle Corporation
+140.245.114.190,443,SG,Oracle Corporation
+138.2.64.229,443,SG,Oracle Corporation
+140.245.54.185,443,SG,Oracle Corporation
 140.245.44.94,443,SG,Oracle Corporation
 140.245.53.52,443,SG,Oracle Corporation
-140.245.54.185,443,SG,Oracle Corporation
-140.245.58.23,443,SG,Oracle Corporation
-138.2.87.237,443,SG,Oracle Corporation
-138.2.109.83,443,SG,Oracle Corporation
-134.185.84.175,443,SG,Oracle Corporation
-140.245.97.215,443,SG,Oracle Corporation
+104.64.192.116,443,SG,Linode
+129.150.63.157,443,SG,Oracle Corporation
 140.245.98.95,443,SG,Oracle Corporation
-149.118.48.187,443,SG,Oracle Corporation
 146.235.22.161,443,SG,Oracle Corporation
-152.69.209.2,443,SG,Oracle Corporation
-152.69.219.33,443,SG,Oracle Corporation
-143.42.66.91,443,SG,Viewqwest Pte Ltd
-161.118.200.170,443,SG,Cloudflare London, LLC
+138.2.81.90,443,SG,Oracle Corporation
+134.185.87.38,443,SG,Oracle Corporation
+149.118.48.187,443,SG,Oracle Corporation
+161.118.196.58,443,SG,Oracle Corporation
+140.245.127.48,443,SG,Oracle Corporation
+161.118.198.68,443,SG,500 Oracle Parkway
 161.118.202.153,443,SG,500 Oracle Parkway
+140.245.104.189,443,SG,Oracle Corporation
+140.245.114.168,443,SG,Oracle Corporation
+161.118.200.170,443,SG,Cloudflare London, LLC
 161.118.206.69,443,SG,500 Oracle Parkway
 161.118.208.138,443,SG,500 Oracle Parkway
 161.118.214.197,443,SG,500 Oracle Parkway
-158.178.224.249,443,SG,Oracle Svenska AB
-161.118.217.162,443,SG,500 Oracle Parkway
-161.118.196.58,443,SG,Oracle Corporation
-161.118.220.38,443,SG,500 Oracle Parkway
-161.118.220.61,443,SG,500 Oracle Parkway
+161.118.215.94,443,SG,500 Oracle Parkway
 161.118.225.77,443,SG,500 Oracle Parkway
 161.118.235.148,443,SG,Oracle Corporation
 161.118.239.161,443,SG,500 Oracle Parkway
-161.118.240.117,443,SG,500 Oracle Parkway
-161.118.210.121,443,SG,Oracle Corporation
 161.118.244.3,443,SG,Oracle Corporation
-161.118.198.68,443,SG,500 Oracle Parkway
-168.107.74.239,443,SG,Oracle Corporation
-168.107.80.15,443,SG,Oracle Corporation
+140.245.58.23,443,SG,Oracle Corporation
+134.185.84.175,443,SG,Oracle Corporation
 168.107.83.238,443,SG,Oracle Corporation
+168.107.74.239,443,SG,Oracle Corporation
 168.107.86.135,443,SG,Oracle Corporation
+161.118.210.121,443,SG,Oracle Corporation
 168.107.91.252,443,SG,Oracle Corporation
 168.107.90.208,443,SG,Oracle Corporation
-168.107.67.27,443,SG,Oracle Corporation
+161.118.220.61,443,SG,500 Oracle Parkway
 168.138.176.180,443,SG,Cloudflare London, LLC
 168.138.182.26,443,SG,Oracle Public Cloud
+161.118.217.162,443,SG,500 Oracle Parkway
+168.107.80.15,443,SG,Oracle Corporation
 168.138.179.69,443,SG,Oracle Public Cloud
-213.35.100.242,443,SG,Oracle Svenska AB
+161.118.220.38,443,SG,500 Oracle Parkway
+168.138.189.91,443,SG,Oracle Public Cloud
 213.35.105.58,443,SG,Cloudflare, Inc.
 213.35.123.85,443,SG,Oracle Corporation
+140.245.97.215,443,SG,Oracle Corporation
 47.82.155.79,2053,SG,Alibaba Cloud LLC
-43.170.38.62,443,SG,6 COLLYER QUAY
+158.178.224.249,443,SG,Oracle Svenska AB
+159.65.1.74,443,SG,DigitalOcean, LLC
 143.198.211.180,443,SG,DigitalOcean, LLC
 43.163.113.253,443,SG,16 COLLYER QUAY # 18-29 INCOME AT RAFFLES
 152.175.67.191,443,SG,SAKURA COMMUNICATIONS PTE. LTD.
-157.230.244.86,443,SG,DigitalOcean, LLC
 157.245.148.160,443,SG,DigitalOcean, LLC
+157.230.244.86,443,SG,DigitalOcean, LLC
 43.160.238.73,443,SG,6 COLLYER QUAY
-168.138.186.56,443,SG,Oracle Public Cloud
-161.118.215.94,443,SG,500 Oracle Parkway
 43.134.62.218,443,SG,6 COLLYER QUAY
 149.28.159.222,443,SG,Vultr Holdings, LLC
 165.245.176.192,443,SG,DigitalOcean, LLC
-168.138.189.91,443,SG,Oracle Public Cloud
 159.89.199.63,443,SG,DigitalOcean, LLC
 149.28.153.207,443,SG,Vultr Holdings, LLC
 138.2.76.34,443,SG,Oracle Corporation
-162.128.72.114,443,SG,Zenlayer (Singapore) PTE. LTD
-159.65.1.74,443,SG,DigitalOcean, LLC
-178.93.160.236,443,SG,Private Customer
-45.32.127.54,443,SG,Vultr Holdings, LLC
 149.33.30.122,443,SG,3NT SOLUTIONS LLP
-83.147.234.163,443,SG,FIRST SERVER, SOCIEDAD LIMITADA
-143.198.80.220,443,SG,DigitalOcean, LLC
-188.239.9.91,443,SG,Huawei-Cloud-SG
+168.138.186.56,443,SG,Oracle Public Cloud
+162.128.72.114,443,SG,Zenlayer (Singapore) PTE. LTD
 166.108.238.41,443,SG,Huawei-Cloud-SG
 61.13.236.181,8443,SG,SPTEL PTE. LTD.
+45.32.127.54,443,SG,Vultr Holdings, LLC
+83.147.234.163,443,SG,FIRST SERVER, SOCIEDAD LIMITADA
+188.239.9.91,443,SG,Huawei-Cloud-SG
+43.170.38.62,443,SG,16 COLLYER QUAY # 18-29 INCOME AT RAFFLES
+178.93.160.236,443,SG,Private Customer
+143.198.80.220,443,SG,DigitalOcean, LLC
+152.69.209.2,443,SG,Oracle Corporation
+213.35.100.242,443,SG,Oracle Svenska AB
