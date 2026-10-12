@@ -65,7 +65,7 @@
     "@types/bun": "^1.4.0",
     "@types/node": "^26.4.0",
     "prettier": "3.9.9",
-    "lint-staged": "17.5.1",
+    "lint-staged": "17.6.0",
     "simple-git-hooks": "2.14.0",
     "typescript": "^7.0.2",
     "wrangler": "^4.127.0"
