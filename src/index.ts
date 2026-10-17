@@ -28,6 +28,7 @@ app.get('/', serveAsset('index.html'));
 app.get('/build', serveAsset('build.html'));
 app.get('/convert', serveAsset('convert.html'));
 app.get('/country', serveAsset('country.html'));
+app.get('/clash', serveAsset('clash.html'));
 
 // Fallback 404
 app.notFound(c => c.json({ error: 'Not found' }, 404, CORS_HEADER_OPTIONS));

@@ -105,7 +105,7 @@ export function createApiRoutes() {
     }
   });
 
-  // GET /sub - subscription generator (raw, v2ray, json)
+  // GET /sub - subscription generator (v2ray, clash, singbox, mihomo)
   const subHandler = async (c: any) => {
     try {
       // Token-protected subscription: only valid with ?token=SUB_TOKEN
@@ -145,6 +145,7 @@ export function createApiRoutes() {
       //   domain   = custom domain "bug" (default: support.zoom.us)
       //   wildcard = yes | no           (default: yes)
       const mode = c.req.query('mode') || 'cdn';
+      const hasCustomDomain = c.req.query('domain') !== undefined;
       const bugDomain = c.req.query('domain') || 'support.zoom.us';
       const wildcard = c.req.query('wildcard') || 'yes';
 
@@ -169,8 +170,13 @@ export function createApiRoutes() {
           host = bugDomain;
         } else {
           server = hostname;
-          servername = bugDomain;
-          host = bugDomain;
+          // Default SNI/Host pakai hostname sendiri, bukan "bug domain":
+          // domain contoh seperti support.zoom.us tidak pernah diarahkan ke Worker
+          // kita, sehingga handshake TLS gagal. Hostname sendiri sudah terbukti
+          // bisa handshake (101 Switching Protocols) dan punya sertifikat valid.
+          // Untuk mengembalikan perilaku lama, kirim &domain=support.zoom.us.
+          servername = hasCustomDomain ? bugDomain : hostname;
+          host = servername;
         }
       }
 
@@ -246,8 +252,31 @@ export function createApiRoutes() {
         }
       }
 
-      // Output: v2ray (default), clash, singbox
+      // Clash / mihomo mewajibkan proxy name unik secara global. Nama bawaan
+      // ("bendera + nama organisasi") sangat sering tabrakan — terukur 100 node
+      // hanya punya 27 nama berbeda. Clash menolak SELURUH konfigurasi kalau ada
+      // nama ganda (duplicate name), sedangkan v2rayN tidak peduli. Tambahkan
+      // nomor urut agar semua klien bisa menerima output ini.
+      const nameCount = new Map<string, number>();
+      for (const l of links) {
+        const seen = nameCount.get(l.name) ?? 0;
+        nameCount.set(l.name, seen + 1);
+        if (seen > 0) {
+          const suffix = ` ${String(seen + 1).padStart(2, '0')}`;
+          const before = l.remark;
+          l.name += suffix;
+          l.remark += suffix;
+          // Sinkronkan fragmen #remark di URI (dipakai format=v2ray) supaya nama
+          // yang tampil di klien sama dengan nama di YAML/JSON.
+          l.uri = l.uri.replace(`#${encodeURIComponent(before)}`, `#${encodeURIComponent(l.remark)}`);
+        }
+      }
+
+      // Output: v2ray (default), clash, singbox, mihomo
       const resultLines = links.map(l => l.uri);
+
+      // Escape + quote untuk nilai YAML (nama node berisi emoji bendera & spasi)
+      const yq = (s: string) => `"${s.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`;
 
       // Konversi link ke format Clash YAML (proxy list)
       const toClashYaml = (l: (typeof links)[number]) => {
@@ -279,6 +308,39 @@ export function createApiRoutes() {
           `      path: ${l.path}`,
           `      headers:`,
           `        Host: ${l.host}`,
+          `    udp: true`
+        );
+        return fields.join('\n');
+      };
+
+      // Konversi link ke entry proxy mihomo (dipakai format=mihomo)
+      const toMihomoProxy = (l: (typeof links)[number]) => {
+        const fields: string[] = [
+          `  - name: ${yq(l.name)}`,
+          `    server: ${l.server}`,
+          `    port: ${l.port}`,
+        ];
+        if (l.protocol === atob(horse)) {
+          fields.push(`    type: trojan`, `    password: ${yq(l.username)}`);
+        } else if (l.protocol === 'vmess') {
+          fields.push(
+            `    type: vmess`,
+            `    uuid: ${yq(l.username)}`,
+            `    alterId: 0`,
+            `    cipher: auto`
+          );
+        } else {
+          fields.push(`    type: vless`, `    uuid: ${yq(l.username)}`, `    cipher: auto`);
+        }
+        fields.push(
+          `    tls: ${l.port == 443}`,
+          `    skip-cert-verify: true`,
+          `    servername: ${yq(l.sni)}`,
+          `    network: ws`,
+          `    ws-opts:`,
+          `      path: ${yq(l.path)}`,
+          `      headers:`,
+          `        Host: ${yq(l.host)}`,
           `    udp: true`
         );
         return fields.join('\n');
@@ -337,9 +399,62 @@ export function createApiRoutes() {
           return c.text(`proxies:\n${links.map(toClashYaml).join('\n')}`, 200, CORS_HEADER_OPTIONS);
         case 'singbox':
           return c.json({ outbounds: links.map(toSingboxJson) }, 200, CORS_HEADER_OPTIONS);
+        case 'mihomo': {
+          // Konfigurasi utuh yang bisa dimuat langsung oleh Clash / mihomo:
+          // port, dns, proxy-groups, dan rules ikut disertakan supaya klien Android
+          // tidak menolak berkasnya ("bukan konfigurasi yang valid").
+          const proxyList = links.map(toMihomoProxy).join('\n');
+          const groupList = links.map(l => `      - ${yq(l.name)}`).join('\n');
+          const body = `mixed-port: 7890
+allow-lan: true
+bind-address: '*'
+mode: rule
+log-level: info
+ipv6: false
+
+dns:
+  enable: true
+  listen: 0.0.0.0:1053
+  ipv6: false
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  default-nameserver:
+    - 223.5.5.5
+    - 119.29.29.29
+  nameserver:
+    - https://1.1.1.1/dns-query
+    - https://8.8.8.8/dns-query
+
+proxies:
+${proxyList}
+
+proxy-groups:
+  - name: PROXY
+    type: select
+    proxies:
+      - Auto
+${groupList}
+  - name: Auto
+    type: url-test
+    url: http://www.gstatic.com/generate_204
+    interval: 300
+    tolerance: 50
+    proxies:
+${groupList}
+
+rules:
+  - MATCH,PROXY
+`;
+          // Harus pakai c.body() agar Content-Type jadi text/yaml. c.text() akan
+          // memaksanya jadi text/plain dan sebagian klien Android menolaknya.
+          return c.body(body, 200, {
+            ...CORS_HEADER_OPTIONS,
+            'Content-Type': 'text/yaml; charset=utf-8',
+          });
+        }
         default:
           return c.text(
-            `Unsupported format "${filterFormat}". Supported formats: ${atob(v2)}, clash, singbox.`,
+            `Unsupported format "${filterFormat}". Supported formats: ${atob(v2)}, clash, singbox, mihomo.`,
             400,
             CORS_HEADER_OPTIONS
           );

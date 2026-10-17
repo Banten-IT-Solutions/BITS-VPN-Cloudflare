@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="zh-CN" class="dark scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>一键配置 · BITS Cloudflare VPN</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = { darkMode: 'class' };
+    </script>
+    <style>
+      body {
+        background-color: #050014;
+        background-image: radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 0);
+        background-size: 32px 32px;
+        color: #e2e8f0;
+        font-family:
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          Roboto,
+          'Helvetica Neue',
+          Arial,
+          sans-serif;
+      }
+      .glass-card {
+        background: linear-gradient(145deg, rgba(30, 41, 59, 0.45) 0%, rgba(15, 23, 42, 0.45) 100%);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+      .gradient-text {
+        background: linear-gradient(135deg, #a78bfa 0%, #e879f9 50%, #fcd34d 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      input,
+      select {
+        color-scheme: dark;
+      }
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #334155;
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+
+  <body class="antialiased">
+    <div class="max-w-4xl mx-auto px-5 py-10">
+      <header class="mb-9">
+        <a href="/" class="text-xs text-slate-400 hover:text-slate-200 transition-colors"
+          >← 返回首页</a
+        >
+        <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight mt-3">
+          <span class="gradient-text">一键获取配置</span>
+        </h1>
+        <p class="text-sm text-slate-400 mt-2 leading-relaxed">
+          复制订阅网址，或直接下载配置文件。<br />
+          <span class="text-slate-500"
+            >Token 只保存在你本机浏览器，不会上传服务器，也不会写进仓库。</span
+          >
+        </p>
+      </header>
+
+      <!-- Token -->
+      <section class="glass-card rounded-2xl p-6 mb-5">
+        <h2 class="text-base font-bold text-indigo-300 mb-1">① 订阅 Token</h2>
+        <p class="text-xs text-slate-400 mb-4">
+          就是部署时设置的 <code class="text-indigo-300">SUB_TOKEN</code>。留到本机，换设备要重填。
+        </p>
+        <div class="flex flex-col sm:flex-row gap-3">
+          <input
+            id="token"
+            type="password"
+            placeholder="粘贴你的 SUB_TOKEN"
+            autocomplete="off"
+            spellcheck="false"
+            class="flex-1 rounded-xl bg-slate-900/70 border border-slate-700 px-4 py-2.5 text-sm outline-none focus:border-indigo-400 transition-colors font-mono"
+          />
+          <div class="flex gap-2">
+            <button
+              id="toggleToken"
+              type="button"
+              class="px-3 rounded-xl border border-slate-700 text-slate-400 text-xs hover:border-slate-500 transition-colors"
+            >
+              显示
+            </button>
+            <button
+              id="saveToken"
+              type="button"
+              class="px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold transition-colors"
+            >
+              记住
+            </button>
+            <button
+              id="clearToken"
+              type="button"
+              class="px-3 rounded-xl border border-slate-700 text-slate-400 text-xs hover:border-red-400 hover:text-red-300 transition-colors"
+            >
+              清除
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Params -->
+      <section class="glass-card rounded-2xl p-6 mb-5">
+        <h2 class="text-base font-bold text-emerald-300 mb-4">② 节点参数</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-xs text-slate-400 mb-1.5">节点数量</label>
+            <select
+              id="limit"
+              class="w-full rounded-xl bg-slate-900/70 border border-slate-700 px-3 py-2.5 text-sm outline-none focus:border-emerald-400 transition-colors"
+            >
+              <option value="10">10 个</option>
+              <option value="20" selected>20 个</option>
+              <option value="30">30 个</option>
+              <option value="50">50 个</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs text-slate-400 mb-1.5">国家</label>
+            <input
+              id="cc"
+              value="ID,SG"
+              placeholder="ID,SG 或 all"
+              class="w-full rounded-xl bg-slate-900/70 border border-slate-700 px-3 py-2.5 text-sm outline-none focus:border-emerald-400 transition-colors font-mono"
+            />
+          </div>
+          <div>
+            <label class="block text-xs text-slate-400 mb-1.5">端口</label>
+            <select
+              id="port"
+              class="w-full rounded-xl bg-slate-900/70 border border-slate-700 px-3 py-2.5 text-sm outline-none focus:border-emerald-400 transition-colors"
+            >
+              <option value="443" selected>443（TLS）</option>
+              <option value="80">80</option>
+            </select>
+          </div>
+        </div>
+        <p class="text-[11px] text-slate-500 mt-3">
+          连接参数已自动锁定为实测可用的组合：<code class="text-slate-400"
+            >mode=sni &amp; wildcard=no &amp; domain=当前域名</code
+          >，避免默认配置落到不可达的主机上。
+        </p>
+      </section>
+
+      <!-- Formats -->
+      <section class="mb-5">
+        <h2 class="text-base font-bold text-amber-300 mb-4">③ 复制网址 / 下载文件</h2>
+        <div id="cards" class="grid grid-cols-1 gap-4"></div>
+      </section>
+
+      <!-- Status -->
+      <div
+        id="toast"
+        class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-xl text-sm glass-card border border-slate-600"
+      ></div>
+    </div>
+
+    <script>
+      const LS_KEY = 'bits_sub_token';
+      const $ = id => document.getElementById(id);
+
+      const FORMATS = [
+        {
+          fmt: 'mihomo',
+          name: 'Clash Mi（手机）',
+          file: 'clash-mi.yaml',
+          mime: 'text/yaml;charset=utf-8',
+          desc: '完整配置，已含端口 / DNS / 策略组，节点名去重',
+          accent: 'indigo',
+          primary: true,
+        },
+        {
+          fmt: 'v2ray',
+          name: 'v2rayN 订阅',
+          file: 'v2rayn-sub.txt',
+          mime: 'text/plain;charset=utf-8',
+          desc: 'base64 订阅，v2rayN / NekoBox 一键导入',
+          accent: 'emerald',
+        },
+        {
+          fmt: 'singbox',
+          name: 'sing-box',
+          file: 'singbox.json',
+          mime: 'application/json;charset=utf-8',
+          desc: 'sing-box 客户端 outbound',
+          accent: 'amber',
+        },
+      ];
+
+      const ACCENT = {
+        indigo: {
+          ring: 'hover:border-indigo-400/70',
+          title: 'text-indigo-300',
+          btn: 'bg-indigo-600 hover:bg-indigo-500',
+        },
+        emerald: {
+          ring: 'hover:border-emerald-400/70',
+          title: 'text-emerald-300',
+          btn: 'bg-emerald-600 hover:bg-emerald-500',
+        },
+        amber: {
+          ring: 'hover:border-amber-400/70',
+          title: 'text-amber-300',
+          btn: 'bg-amber-600 hover:bg-amber-500',
+        },
+      };
+
+      let toastTimer = null;
+      function toast(msg, bad) {
+        const t = $('toast');
+        t.textContent = msg;
+        t.className =
+          'fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-xl text-sm glass-card ' +
+          (bad ? 'border-red-400/60 text-red-200' : 'border-emerald-400/60 text-emerald-100');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => t.classList.add('hidden'), 3200);
+      }
+
+      function readToken() {
+        return $('token').value.trim();
+      }
+
+      function buildUrl(fmt) {
+        const token = readToken();
+        if (!token) {
+          toast('请先填写订阅 Token', true);
+          return null;
+        }
+        const p = new URLSearchParams({
+          token,
+          mode: 'sni',
+          wildcard: 'no',
+          domain: location.hostname,
+          port: $('port').value,
+          cc: $('cc').value.trim() || 'all',
+          limit: $('limit').value,
+          format: fmt,
+        });
+        return location.origin + '/api/sub?' + p.toString();
+      }
+
+      function render() {
+        $('cards').innerHTML = FORMATS.map((f, i) => {
+          const a = ACCENT[f.accent];
+          return `
+          <div class="glass-card rounded-2xl p-5 border border-slate-700/60 transition-colors ${a.ring}">
+            <div class="flex items-start justify-between gap-3 mb-1">
+              <div>
+                <h3 class="text-sm font-bold ${a.title}">${f.name}
+                  ${
+                    f.primary
+                      ? '<span class="ml-2 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-400/40">推荐</span>'
+                      : ''
+                  }
+                </h3>
+                <p class="text-xs text-slate-400 mt-1">${f.desc}</p>
+                <p class="text-[11px] text-slate-500 mt-1 font-mono">${f.file}</p>
+              </div>
+            </div>
+            <input
+              id="url-${i}"
+              readonly
+              class="w-full mt-3 rounded-lg bg-slate-950/70 border border-slate-800 px-3 py-2 text-[11px] font-mono text-slate-400 outline-none select-all"
+            />
+            <div class="flex gap-2 mt-3">
+              <button type="button" data-copy="${i}"
+                class="flex-1 px-4 py-2 rounded-xl text-sm font-semibold text-white ${a.btn} transition-colors">
+                复制网址
+              </button>
+              <button type="button" data-download="${i}"
+                class="flex-1 px-4 py-2 rounded-xl text-sm font-semibold border border-slate-600 text-slate-200 hover:border-slate-400 transition-colors">
+                下载文件
+              </button>
+            </div>
+          </div>`;
+        }).join('');
+
+        syncUrls();
+
+        document.querySelectorAll('[data-copy]').forEach(b => {
+          b.addEventListener('click', () => copyUrl(+b.dataset.copy));
+        });
+        document.querySelectorAll('[data-download]').forEach(b => {
+          b.addEventListener('click', () => download(+b.dataset.download));
+        });
+      }
+
+      function syncUrls() {
+        FORMATS.forEach((f, i) => {
+          const input = $('url-' + i);
+          if (!input) return;
+          const u = buildUrl(f.fmt);
+          input.value = u || '（填写 Token 后自动生成）';
+        });
+      }
+
+      async function copyUrl(i) {
+        const f = FORMATS[i];
+        const u = buildUrl(f.fmt);
+        if (!u) return;
+        const input = $('url-' + i);
+        try {
+          await navigator.clipboard.writeText(u);
+          toast('已复制 ' + f.name + ' 的订阅网址');
+        } catch (e) {
+          input.select();
+          document.execCommand('copy');
+          toast('已复制（兼容模式）');
+        }
+      }
+
+      async function download(i) {
+        const f = FORMATS[i];
+        const u = buildUrl(f.fmt);
+        if (!u) return;
+        toast('正在生成 ' + f.file + ' …');
+        try {
+          const res = await fetch(u);
+          if (!res.ok) {
+            const detail = (await res.text()).slice(0, 140);
+            toast('失败 ' + res.status + '：' + detail, true);
+            return;
+          }
+          const text = await res.text();
+          const url = URL.createObjectURL(new Blob([text], { type: f.mime }));
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = f.file;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          setTimeout(() => URL.revokeObjectURL(url), 1000);
+          toast('已下载 ' + f.file);
+        } catch (e) {
+          toast('请求失败：' + e.message, true);
+        }
+      }
+
+      $('token').addEventListener('input', syncUrls);
+      ['limit', 'cc', 'port'].forEach(id => $(id).addEventListener('input', syncUrls));
+
+      $('toggleToken').addEventListener('click', () => {
+        const el = $('token');
+        if (el.type === 'password') {
+          el.type = 'text';
+          $('toggleToken').textContent = '隐藏';
+        } else {
+          el.type = 'password';
+          $('toggleToken').textContent = '显示';
+        }
+      });
+
+      $('saveToken').addEventListener('click', () => {
+        const v = readToken();
+        if (!v) return toast('Token 为空', true);
+        localStorage.setItem(LS_KEY, v);
+        toast('已记住 Token（只存在本机浏览器）');
+      });
+
+      $('clearToken').addEventListener('click', () => {
+        localStorage.removeItem(LS_KEY);
+        $('token').value = '';
+        syncUrls();
+        toast('已清除本机保存的 Token');
+      });
+
+      const saved = localStorage.getItem(LS_KEY);
+      if (saved) {
+        $('token').value = saved;
+        toast('已从本机读取上次保存的 Token');
+      }
+      render();
+    </script>
+  </body>
+</html>
